@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Profile</h2>
+    <p>Username: {{ user.username }}</p>
+    <p>Email: {{ user.email }}</p>
+    {% if user.is_admin %}
+    <a href="{{ url_for('admin') }}" class="btn btn-primary">Пользователи</a>
+    {% endif %}
+</div>
+<footer class="footer">
+    <p>&copy; 2024 Copying prohibited. All rights reserved.</p>
+    <p><a href="https://t.me/backend_creator" target="_blank">Telegram: @backend_creator</a></p>
+</footer>
+{% endblock %}
