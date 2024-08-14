@@ -1,4 +1,4 @@
-import sys  # Добавьте эту строку
+import sys  
 from cx_Freeze import setup, Executable
 
 build_options = {
