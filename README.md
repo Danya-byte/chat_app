@@ -1,5 +1,4 @@
 #Check my project -> https://cloud.mail.ru/public/MzNe/9z3RBnJ3n
-# Danya-byte.github.io
 I tried to make a real-time chat, this is what happened...
 1) Login is carried out on the login.html window
 2) There is NO registration form, because it is assumed that the chat participant will 'worry' about the existence of the account in advance (write to me, for example, through an anti-copywriter)
