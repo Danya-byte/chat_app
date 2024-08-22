@@ -75,6 +75,12 @@ def handle_disconnect():
         online_users.discard(session['username'])
         emit('online_count', len(online_users), broadcast=True, namespace='/')
 
+@socketio.on('delete_message')
+def handle_delete_message(data):
+    message_id = data.get('message_id')
+    if message_id:
+        emit('delete_message', {'message_id': message_id}, broadcast=True, namespace='/')
+
 @socketio.on('message')
 def handle_message(msg):
     if 'username' in session:
@@ -170,6 +176,16 @@ def profile():
         user = User.query.filter_by(username=session['username']).first()
         return render_template('profile.html', user=user)
     return redirect(url_for('login'))
+
+@app.route('/delete_message/<int:message_id>', methods=['POST'])
+def delete_message(message_id):
+    if 'username' in session and session['is_admin']:
+        message = Message.query.get(message_id)
+        if message:
+            db.session.delete(message)
+            db.session.commit()
+            socketio.emit('delete_message', {'message_id': message_id}, broadcast=True, namespace='/')
+    return redirect(url_for('admin'))
 
 @app.route('/admin/chat')
 def admin_chat():
