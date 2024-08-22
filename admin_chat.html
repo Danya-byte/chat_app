@@ -6,7 +6,12 @@
 <div class="chat">
     <div id="messages">
         {% for message in messages %}
-        <div>{{ message.sender.username }}: {{ message.content }}</div>
+        <div id="message-{{ message.id }}">
+            {{ message.sender.username }}: {{ message.content }}
+            {% if session['is_admin'] %}
+            <button class="delete-message" data-message-id="{{ message.id }}">Delete</button>
+            {% endif %}
+        </div>
         {% endfor %}
     </div>
     <div class="message-input">
@@ -25,8 +30,23 @@
     socket.on('message', function(data) {
         const messages = document.getElementById('messages');
         const newMessage = document.createElement('div');
+        newMessage.id = `message-${data.message_id}`;
         newMessage.textContent = `${data.username}: ${data.message}`;
+        if ({{ session['is_admin']|tojson }}) {
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'delete-message';
+            deleteButton.dataset.messageId = data.message_id;
+            deleteButton.textContent = 'Delete';
+            newMessage.appendChild(deleteButton);
+        }
         messages.appendChild(newMessage);
+    });
+
+    socket.on('delete_message', function(data) {
+        const messageElement = document.getElementById(`message-${data.message_id}`);
+        if (messageElement) {
+            messageElement.remove();
+        }
     });
 
     document.getElementById('send').onclick = function() {
@@ -47,5 +67,16 @@
             input.value = '';
         }
     }
+
+    document.addEventListener('click', function(event) {
+        if (event.target.classList.contains('delete-message')) {
+            const messageId = event.target.dataset.messageId;
+            fetch(`/delete_message/${messageId}`, {
+                method: 'POST'
+            }).then(() => {
+                socket.emit('delete_message', { message_id: messageId });
+            });
+        }
+    });
 </script>
 {% endblock %}
