@@ -20,3 +20,4 @@ What about the database... I used SQLAlchemy, user passwords are hashed
 Looks like I haven't forgotten anything...
 
 CHECK UPDATE_FILE
+
