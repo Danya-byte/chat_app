@@ -39,7 +39,6 @@ def index():
         return render_template('index.html', messages=messages, online_count=len(online_users))
     return redirect(url_for('login'))
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -57,7 +56,6 @@ def login():
             flash('Invalid login or password')
     return render_template('login.html')
 
-
 @app.route('/logout')
 def logout():
     if 'username' in session:
@@ -67,7 +65,6 @@ def logout():
     session.pop('email', None)
     session.pop('is_admin', None)
     return redirect(url_for('login'))
-
 
 @socketio.on('connect')
 def handle_connect():
@@ -80,7 +77,6 @@ def handle_connect():
     else:
         print("No username in session")
 
-
 @socketio.on('disconnect')
 def handle_disconnect():
     print('Client disconnected')
@@ -90,7 +86,6 @@ def handle_disconnect():
         online_users.discard(session['username'])
         emit('online_count', len(online_users), broadcast=True, namespace='/')
 
-
 @app.route('/admin')
 def admin():
     if 'username' in session and session['is_admin']:
@@ -98,7 +93,6 @@ def admin():
         messages = Message.query.order_by(Message.timestamp).all()
         return render_template('admin_chat.html', users=users, messages=messages)
     return redirect(url_for('index'))
-
 
 @app.route('/block_user', methods=['POST'])
 def block_user():
@@ -115,15 +109,16 @@ def block_user():
 
 @socketio.on('message')
 def handle_message(msg):
+    print(f"Received message: {msg}")  # Логирование для проверки
     if 'username' in session:
         user = User.query.filter_by(username=session['username']).first()
         if user and user.blocked_until and user.blocked_until > datetime.now():
+            print("User is blocked")  # Логирование для проверки
             return  # Заблокированные пользователи не могут отправлять сообщения
         new_message = Message(sender_id=user.id, content=msg)
         db.session.add(new_message)
         db.session.commit()
-        emit('message', {'username': session['username'], 'message': msg}, broadcast=True)
-
+        emit('message', {'username': session['username'], 'message': msg, 'message_id': new_message.id}, broadcast=True)
 
 @app.route('/delete/<int:user_id>')
 def delete_user(user_id):
@@ -134,7 +129,6 @@ def delete_user(user_id):
             db.session.commit()
     return redirect(url_for('admin_users'))
 
-
 @app.route('/make_admin/<int:user_id>')
 def make_admin(user_id):
     if 'username' in session and session['is_admin']:
@@ -143,7 +137,6 @@ def make_admin(user_id):
             user.is_admin = True
             db.session.commit()
     return redirect(url_for('admin_users'))
-
 
 @app.route('/edit_user/<int:user_id>', methods=['GET', 'POST'])
 def edit_user(user_id):
@@ -158,7 +151,6 @@ def edit_user(user_id):
             return redirect(url_for('admin'))
         return render_template('edit_user.html', user=user)
     return redirect(url_for('index'))
-
 
 @app.route('/add_user', methods=['POST'])
 def add_user():
@@ -177,7 +169,6 @@ def add_user():
             flash('User added successfully')
     return redirect(url_for('admin_users'))
 
-
 @app.route('/blocked/<username>')
 def blocked(username):
     user = User.query.filter_by(username=username).first()
@@ -186,14 +177,12 @@ def blocked(username):
         return render_template('blocked.html', user=user, remaining_time=remaining_time)
     return redirect(url_for('index'))
 
-
 @app.route('/profile')
 def profile():
     if 'username' in session:
         user = User.query.filter_by(username=session['username']).first()
         return render_template('profile.html', user=user)
     return redirect(url_for('login'))
-
 
 @app.route('/delete_message/<int:message_id>', methods=['POST'])
 def delete_message(message_id):
@@ -205,7 +194,6 @@ def delete_message(message_id):
             socketio.emit('delete_message', {'message_id': message_id}, room=None, namespace='/')
     return redirect(url_for('admin'))
 
-
 @app.route('/admin/chat')
 def admin_chat():
     if 'username' in session and session['is_admin']:
@@ -213,14 +201,12 @@ def admin_chat():
         return render_template('admin_chat.html', messages=messages)
     return redirect(url_for('index'))
 
-
 @app.route('/admin/users')
 def admin_users():
     if 'username' in session and session['is_admin']:
         users = User.query.all()
         return render_template('admin_users.html', users=users)
     return redirect(url_for('index'))
-
 
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5000, debug=True)

@@ -28,8 +28,14 @@
 {% block scripts %}
     {{ super() }}  <!-- Сохраняем родительский скрипт -->
     <script>
-        // Обработчик для новых сообщений
+        const socket = io();
+
+        socket.on('connect', function() {
+            console.log("Connected to WebSocket server");  // Логирование для проверки
+        });
+
         socket.on('message', function(data) {
+            console.log('New message received:', data);  // Логирование для проверки
             const messages = document.getElementById('messages');
             const newMessage = document.createElement('div');
             newMessage.id = `message-${data.message_id}`;
@@ -44,20 +50,10 @@
             messages.appendChild(newMessage);
         });
 
-        // Обработчик для удаления сообщений
-        socket.on('delete_message', function(data) {
-            const messageElement = document.getElementById(`message-${data.message_id}`);
-            if (messageElement) {
-                messageElement.remove();
-            }
-        });
-
-        // Отправка сообщения
         document.getElementById('send').onclick = function() {
             sendMessage();
         };
 
-        // Отправка сообщения при нажатии Enter
         document.getElementById('message').onkeypress = function(e) {
             if (e.keyCode === 13) {
                 sendMessage();
@@ -68,12 +64,12 @@
             const input = document.getElementById('message');
             const msg = input.value;
             if (msg.trim() !== '') {
+                console.log("Sending message:", msg);  // Логирование для проверки
                 socket.send(msg);
                 input.value = '';
             }
         }
 
-        // Удаление сообщения
         document.addEventListener('click', function(event) {
             if (event.target.classList.contains('delete-message')) {
                 const messageId = event.target.dataset.messageId;
