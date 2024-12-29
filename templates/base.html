@@ -218,7 +218,7 @@
                         <a href="#"><i class="fas fa-user"></i> {{ session['username'] }}</a>
                         <a href="#"><i class="fas fa-user-tag"></i> Role: {% if 'is_admin' in session and session['is_admin'] %}Admin{% else %}User{% endif %}</a>
                         <a href="{{ url_for('admin_users') }}" style="{% if 'is_admin' not in session or not session['is_admin'] %}display: none;{% endif %}"><i class="fas fa-user-shield"></i> Users</a>
-                        <a href="#" data-toggle="modal" data-target="#settingsModal"><i class="fas fa-cog"></i> Settings</a>
+                        <a href="#" data-toggle="modal" data-target="#settingsModal"><i class="fas fa-cog"></i> Настройки</a>
                         <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
                     </div>
                 </div>
@@ -237,7 +237,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="settingsModalLabel">Settings</h5>
+                    <h5 class="modal-title" id="settingsModalLabel">Настройки</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -245,10 +245,10 @@
                 <div class="modal-body">
                     <form id="themeForm">
                         <div class="form-group">
-                            <label for="themeSelect">Select theme:</label>
+                            <label for="themeSelect">Выберите тему:</label>
                             <select class="form-control" id="themeSelect">
-                                <option value="light">Light</option>
-                                <option value="dark">Dark</option>
+                                <option value="light">Светлая</option>
+                                <option value="dark">Темная</option>
                             </select>
                         </div>
                     </form>
