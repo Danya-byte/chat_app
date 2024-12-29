@@ -1,0 +1,81 @@
+/* static/css/style.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.online-count {
+    margin-bottom: 20px;
+}
+
+.chat {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.users {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+#messages {
+    height: 300px;
+    overflow-y: scroll;
+    border: 1px solid #ddd;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.message-input {
+    display: flex;
+}
+
+.message-input input[type="text"] {
+    flex: 1;
+    border-radius: 5px 0 0 5px;
+}
+
+.message-input button {
+    border-radius: 0 5px 5px 0;
+}
+
+.online-indicator {
+    display: flex;
+    align-items: center;
+    margin-left: -30px; /* Сдвигаем влево на 30px */
+    transform: translateX(-10px); /* Дополнительно сдвигаем влево на 10px */
+}
+
+.online-count {
+    font-size: 20px;
+    color: green;
+    margin-top: 20px; /* Дополнительно сдвигаем число ниже на 5px */
+}
+.online-circle {
+    width: 10px;
+    height: 10px;
+    background-color: green;
+    border-radius: 50%;
+    margin-right: 5px;
+}
+
+.online-text {
+    font-size: 20px;
+    color: #333;
+    margin-right: 5px;
+}

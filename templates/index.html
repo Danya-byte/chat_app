@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Chat{% endblock %}
+
+{% block content %}
+<div class="chat">
+    <div id="messages">
+        {% for message in messages %}
+        <div>{{ message.sender.username }}: {{ message.content }}</div>
+        {% endfor %}
+    </div>
+    <div class="message-input">
+        <input id="message" type="text" class="form-control" placeholder="Type a message...">
+        <button id="send" class="btn btn-primary">Send</button>
+    </div>
+    <footer class="footer">
+        <p>&copy; 2024 Copying prohibited. All rights reserved.</p>
+        <p><a href="https://t.me/backend_creator" target="_blank">Telegram: @backend_creator</a></p>
+    </footer>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}  <!-- Сохраняем родительский скрипт -->
+    <script>
+        socket.on('message', function(data) {
+            console.log('New message received:', data);
+            const messages = document.getElementById('messages');
+            const newMessage = document.createElement('div');
+            newMessage.textContent = `${data.username}: ${data.message}`;
+            messages.appendChild(newMessage);
+        });
+
+        document.getElementById('send').onclick = function() {
+            sendMessage();
+        };
+
+        document.getElementById('message').onkeypress = function(e) {
+            if (e.keyCode === 13) {
+                sendMessage();
+            }
+        };
+
+        function sendMessage() {
+            const input = document.getElementById('message');
+            const msg = input.value;
+            if (msg.trim() !== '') {
+                socket.send(msg);
+                input.value = '';
+            }
+        }
+    </script>
+{% endblock %}

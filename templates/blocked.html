@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Blocked{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2>You are blocked</h2>
+    <p>You are blocked until: {{ user.blocked_until }}</p>
+    <p>Reason: {{ user.block_reason }}</p>
+    <p>Remaining time: <span id="remaining-time">{{ remaining_time }}</span></p>
+</div>
+
+<script>
+    function updateRemainingTime() {
+        const remainingTimeElement = document.getElementById('remaining-time');
+        const remainingTime = new Date("{{ user.blocked_until }}") - new Date();
+        if (remainingTime > 0) {
+            const hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+            remainingTimeElement.textContent = `${hours}h ${minutes}m ${seconds}s`;
+        } else {
+            remainingTimeElement.textContent = '0h 0m 0s';
+        }
+    }
+
+    setInterval(updateRemainingTime, 1000);
+</script>
+{% endblock %}
